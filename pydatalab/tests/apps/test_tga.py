@@ -74,10 +74,9 @@ def test_ms_parse_txt_no_validation(filename):
     assert ms
 
     assert all(k in ms["meta"] for k in ("Title", "Performed", "Sample"))
-    #
     for header in ms["data"]:
-        assert ("t[s]" in ms["data"][header])
-        assert ("Value[mg]" in ms["data"][header])
-        assert ("T[°C]" in ms["data"][header])
-        assert ("Tr[°C]" in ms["data"][header])
+        assert "t[s]" in ms["data"][header]
+        assert "Value[mg]" in ms["data"][header]
+        assert "Ts[°C]" in ms["data"][header]
+        assert "Tr[°C]" in ms["data"][header]
 

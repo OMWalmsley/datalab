@@ -1,3 +1,5 @@
+import re
+from io import StringIO
 from pathlib import Path
 
 import dateutil
@@ -87,5 +89,79 @@ def parse_mt_mass_spec_ascii(path: Path) -> dict[str, pd.DataFrame | dict]:
 
             # If the file was provided in an incomplete form, the final rows will be NaN, so drop them
             ms_results["data"][specie].dropna(inplace=True)
+
+        return ms_results
+
+def parse_mt_mass_spec_txt(path:Path) -> dict[str, pd.DataFrame | dict]:
+    """Parses an .txt file containing results associated with a tga experiment
+        Parameters:
+            path: The path of the file to parse.
+        """
+
+    header_keys = ("Title", "Performed", "Sample", "Curve Values:")
+    data_keys = ("t[s]", "T[°C]", "Tr[°C]", "Value[mg]")
+    header = {}
+
+    if not path.exists():
+        raise RuntimeError(f"Provided path does not exist: {path!r}")
+
+    with open(path, encoding="latin-1") as f:
+        # Read start of file until all header keys have been found
+        max_header_lines = 11
+
+        for reads in range(max_header_lines):
+            line = f.readline().strip()
+            if line:
+                for key in header_keys:
+                    if key in line:
+                        header[key] = line.split(key)[-1].strip()
+            if all(k in header for k in header_keys):
+                header_end = f.tell()
+                break
+        else:
+            raise ValueError(
+                f"Could not find all header keys in first {max_header_lines} lines of file."
+            )
+
+        header["Performed"] = dateutil.parser.parse(header["Performed"])
+        min_columns_lines = 2
+        max_names_lines = 10
+
+        for reads in range(max_names_lines):
+            line = f.readline().strip()
+            if line:
+                name = line.strip().split()[1:]
+                unit = f.readline().strip().split()
+                column_headers = [f"{name}{unit}" for name, unit in zip(name, unit)]
+                column_headers.insert(0, "Index")
+                break
+        else:
+            raise ValueError(
+                f"Could not find names list in lines {header_end}:{header_end + max_names_lines} lines of file."
+            )
+
+
+
+        final_lines = f.readlines()
+
+        # Remove bottom header from the file
+        max_bottom_header_lines = 11
+        for index in range(1, max_bottom_header_lines):
+            if re.match(r"^[\d.\s-]*\d[\d.\s-]*$", final_lines[-index]):
+                final_lines = final_lines[:-(index-1)]
+                break
+        else:
+            raise ValueError(f"Bottom header did not end within max size:{max_bottom_header_lines}")
+
+        csv_result = StringIO("\n".join(final_lines))
+        # Read data with duplicated keys: will have (column number % number of data keys) appended to them
+        # MT software also writes "---" if the value is missing, so parse these as NaNs to remove later
+        df = pd.read_csv(csv_result, sep=r"\s+", header=None, parse_dates=False, names=column_headers, na_values="---", index_col="Index")
+
+        ms_results: dict[str, pd.DataFrame | dict] = {}
+        ms_results["meta"] = header
+        ms_results["data"] = {}
+
+        ms_results["data"]["tga"] = df
 
         return ms_results
