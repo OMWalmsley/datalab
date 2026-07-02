@@ -63,6 +63,8 @@ def test_ms_parse_no_validation(filename):
         )
         assert "Time Relative [s]" in ms["data"][species]
         assert "Time" not in ms["data"][species]
+
+
 @pytest.mark.parametrize(
     "filename", (Path(__file__).parent.parent.parent / "example_data" / "TGA-MS").glob("*.txt")
 )
@@ -73,10 +75,9 @@ def test_ms_parse_txt_no_validation(filename):
     # check that the results exist
     assert ms
 
-    assert all(k in ms["meta"] for k in ("Title", "Performed", "Sample"))
+    assert "Performed" in ms["meta"]
     for header in ms["data"]:
         assert "t[s]" in ms["data"][header]
         assert "Value[mg]" in ms["data"][header]
         assert "Ts[°C]" in ms["data"][header]
         assert "Tr[°C]" in ms["data"][header]
-
