@@ -24,7 +24,7 @@ from .utils import (
 
 
 class XRDBlock(DataBlock):
-    blocktype = "xrd"
+    block_type = "xrd"
     name = "Powder XRD"
     description = "Visualize XRD patterns and perform simple baseline corrections."
     accepted_file_extensions = (".xrdml", ".xy", ".dat", ".xye", ".rasx", ".cif", ".raw", ".brml")

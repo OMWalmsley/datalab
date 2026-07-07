@@ -41,7 +41,7 @@ class CycleBlock(DataBlock):
 
     """
 
-    blocktype = "cycle"
+    block_type = "cycle"
     name = "Electrochemical cycling"
     description = """This block can plot data from electrochemical cycling experiments from many different cycler's file formats.
     The file formats currently supported are:

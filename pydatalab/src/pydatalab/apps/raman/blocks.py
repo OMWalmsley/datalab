@@ -16,7 +16,7 @@ from pydatalab.file_utils import get_file_info_by_id
 
 
 class RamanBlock(DataBlock):
-    blocktype = "raman"
+    block_type = "raman"
     name = "Raman spectroscopy"
     description = "Visualize 1D Raman spectroscopy data."
     accepted_file_extensions = (".txt", ".wdf")

@@ -16,7 +16,7 @@ from pydatalab.logger import LOGGER
 
 class CVBlock(DataBlock):
     accepted_file_extensions: tuple[str, ...] = (".mpr", ".txt")
-    blocktype = "cv"
+    block_type = "cv"
     name = "Cyclic Voltammetry"
     description = (
         "This block can plot CV data from:\n\n"

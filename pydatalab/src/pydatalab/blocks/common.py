@@ -18,20 +18,20 @@ EXCEL_LIKE_EXTENSIONS: tuple[str, ...] = (".xls", ".xlsx", ".xlsm", ".xlsb", ".o
 
 class NotSupportedBlock(DataBlock):
     name = "Not Supported"
-    blocktype = "notsupported"
+    block_type = "notsupported"
     description = "A placeholder block type when the requested block is not supported by the current version of the server."
 
 
 class CommentBlock(DataBlock):
     name = "Comment"
-    blocktype = "comment"
+    block_type = "comment"
     description = "Add a rich text comment to the document."
     _supports_collections = True
 
 
 class MediaBlock(DataBlock):
     name = "Media"
-    blocktype = "media"
+    block_type = "media"
     description = "Display an image or a video of a supported format."
     accepted_file_extensions = (
         ".png",
@@ -79,7 +79,7 @@ class TabularDataBlock(DataBlock):
 
     """
 
-    blocktype = "tabular"
+    block_type = "tabular"
     name = "Tabular Data Block"
     description = "This block will load tabular data from common plain text files and Excel-like spreadsheets and allow you to create simple scatter plots of the columns within."
     accepted_file_extensions = (".csv", ".txt", ".tsv", ".dat", *EXCEL_LIKE_EXTENSIONS)

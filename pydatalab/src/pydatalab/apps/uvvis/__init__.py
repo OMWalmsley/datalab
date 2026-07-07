@@ -14,7 +14,7 @@ from .utils import find_absorbance, parse_uvvis_txt
 
 class UVVisBlock(DataBlock):
     accepted_file_extensions = (".Raw8.txt", ".txt")
-    blocktype = "uv-vis"
+    block_type = "uv-vis"
     name = "UV-Vis"
     description = (
         "This block can plot UV-Vis data from a .txt file. "

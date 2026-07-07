@@ -103,7 +103,7 @@ def load_app_blocks():
 
 
 BLOCKS = COMMON_BLOCKS + load_app_blocks()
-BLOCK_TYPES: dict[str, type["DataBlock"]] = {block.blocktype: block for block in BLOCKS}
+BLOCK_TYPES: dict[str, type["DataBlock"]] = {block.block_type: block for block in BLOCKS}
 
 
 def load_block_plugins():
@@ -121,10 +121,10 @@ def load_block_plugins():
         if not issubclass(block, DataBlock):
             raise ValueError(f"Plugin {block} must be a subclass of DataBlock")
 
-        block_plugins[block.blocktype] = block
+        block_plugins[block.block_type] = block
 
-        if block.blocktype not in BLOCK_TYPES:
-            BLOCK_TYPES[block.blocktype] = block
+        if block.block_type not in BLOCK_TYPES:
+            BLOCK_TYPES[block.block_type] = block
             BLOCKS.append(block)
 
     return block_plugins

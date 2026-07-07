@@ -19,7 +19,7 @@ from pydatalab.logger import LOGGER
 
 class EISBlock(DataBlock):
     accepted_file_extensions = (".txt", ".mpr", ".pssession")
-    blocktype = "eis"
+    block_type = "eis"
     name = "EIS"
     description = """
 This block can plot electrochemical impedance spectroscopy (EIS) data from:

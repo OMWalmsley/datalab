@@ -28,7 +28,7 @@ class DataBlockResponse(BaseModel):
 
     freeform_comment: str | None = None
     """A freeform comment for the block, if any."""
-
+    # possibly remove this
     file_id: PyObjectId | None = None
     """The ID of the file associated with the block, if any."""
 

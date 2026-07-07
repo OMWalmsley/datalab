@@ -24,7 +24,7 @@ JEOL_FILE_EXTENSIONS = (".jdf",)
 
 
 class NMRBlock(DataBlock):
-    blocktype = "nmr"
+    block_type = "nmr"
     name = "NMR"
     description = "A data block for loading and visualizing 1D NMR data from Bruker projects, JEOL files or JCAMP-DX files."
     block_db_model = NMRModel

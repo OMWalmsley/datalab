@@ -51,7 +51,7 @@ class ChatBlock(DataBlock):
 
     block_db_model = ChatBlockResponse
 
-    blocktype = "chat"
+    block_type = "chat"
     description = "Virtual LLM assistant block allows you to converse with your data."
     name = "Whinchat assistant"
     accepted_file_extensions = None

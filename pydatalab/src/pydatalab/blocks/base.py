@@ -71,7 +71,7 @@ def event(func: Callable | None = None) -> Callable:
     return decorator
 
 
-class classproperty:
+class ClassProperty:
     """Decorator that creates a class-level property."""
 
     def __init__(self, method=None):
@@ -84,7 +84,7 @@ class classproperty:
 def generate_random_id():
     """This function generates a random 15-length string for use as an id for a datablock. It
     should be sufficiently random that there is a negligible risk of ever generating
-    the same id twice, so this is a unique id that can be used as a unique database refrence
+    the same id twice, so this is a unique id that can be used as a unique database reference
     and also can be used as id in the DOM. Note: uuid.uuid4() would do this too, but I think
     the generated ids are too long and ugly.
 
@@ -105,14 +105,15 @@ def generate_random_id():
 class DataBlock:
     """Base class for a data block."""
 
+    # thing we store in the database
     block_db_model = DataBlockResponse
 
     name: str = "base"
     """The human-readable block name specifying which technique
     or file format it pertains to.
     """
-
-    blocktype: str = "generic"
+    # Why do I need block type when it is block_db_model
+    block_type: str = "generic"
     """A short (unique) string key specifying the type of block."""
 
     description: str = "Generic Block"
@@ -132,7 +133,7 @@ class DataBlock:
 
     _supports_collections: bool = False
     """Whether this datablock can operate on collection data, or just individual items"""
-
+    # possibly remove along with file ids
     multi_file: bool = False
     """Whether this block can accept multiple files as input."""
 
@@ -174,13 +175,14 @@ class DataBlock:
             self.__class__.__name__,
             item_id,
         )
+        # What do you mean supposed to be?????
         self.block_id = (
             unique_id or generate_random_id()
         )  # this is supposed to be a unique id for use in html and the database.
         self.data = {
             "item_id": item_id,
             "collection_id": collection_id,
-            "blocktype": self.blocktype,
+            "blocktype": self.block_type,
             "block_id": self.block_id,
             **self.defaults,
         }
@@ -188,9 +190,13 @@ class DataBlock:
         # convert ObjectId file_ids to string to make handling them easier when sending to and from web
         if "file_id" in self.data:
             self.data["file_id"] = str(self.data["file_id"])
-
+        # What is the difference between title and name then??
+        # You set self.data surely you should know what is in self.data????
         if "title" not in self.data:
             self.data["title"] = self.name
+
+        # Why not do this first???
+        # And then check whether things are filled and if not fill them with defaults
         self.data.update(
             init_data
         )  # this could overwrite blocktype and block_id. I think that's reasonable... maybe
@@ -309,12 +315,12 @@ class DataBlock:
 
         return events
 
-    @classproperty
+    @ClassProperty
     def event_names(cls) -> set[str]:
         """Return a list of event names supported by this block."""
         return set(cls.events_by_name.keys())
 
-    @classproperty
+    @ClassProperty
     def events_by_name(cls) -> dict[str, Callable]:
         """Returns a dict of registered events for this block."""
         return {
