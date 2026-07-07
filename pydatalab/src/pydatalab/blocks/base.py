@@ -199,7 +199,9 @@ class DataBlock:
         # And then check whether things are filled and if not fill them with defaults
         self.data.update(
             init_data
-        )  # this could overwrite blocktype and block_id. I think that's reasonable... maybe
+        )  # this could overwrite blocktype and block_id. I think that's reasonable... maybe.
+        # I think I disagree
+        # Too many maybes and probablies in this documents
         LOGGER.debug(
             "Initialised block %s for item ID %s or collection ID %s.",
             self.__class__.__name__,
@@ -229,6 +231,7 @@ class DataBlock:
         block_warnings = []
         if self.plot_functions:
             for plot in self.plot_functions:
+                # What is the difference in python between try and except and this capture warnings thing????
                 with warnings.catch_warnings(record=True) as captured_warnings:
                     try:
                         plot()
@@ -271,6 +274,9 @@ class DataBlock:
 
         return self.block_db_model(**self.data).dict(exclude_unset=True, exclude_none=True)
 
+    # What are events???
+    # List of dictionaries or a single dictionary.
+    # Seemingly some type thing
     def process_events(self, events: list[dict] | dict):
         """Handle any supported events passed to the block."""
         if isinstance(events, dict):
@@ -292,6 +298,7 @@ class DataBlock:
                         self.__class__.__name__,
                         e,
                     )
+                    # Some type error thing here. Possibly it expects event to be a string and it's not!!!
                     self.data["errors"] = [
                         f"{self.__class__.__name__}: Error processing event {event}: {e}"
                     ]
