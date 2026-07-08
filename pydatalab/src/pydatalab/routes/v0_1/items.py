@@ -197,6 +197,7 @@ def get_items_summary(match: dict | None = None, project: dict | None = None) ->
     }
 
     # Cannot mix 0 and 1 keys in MongoDB project so must loop and check
+    # duplicated (19 lines long)
     if project:
         for key in project:
             if project[key] == 0:
@@ -273,6 +274,7 @@ def get_samples_summary(match: dict | None = None, project: dict | None = None) 
     }
 
     # Cannot mix 0 and 1 keys in MongoDB project so must loop and check
+    # This entire segment is duplicate 19 lines long
     if project:
         for key in project:
             if project[key] == 0:
@@ -385,16 +387,15 @@ def entry_reference_lookup(item_doc: dict) -> dict:
                     },
                 )
             # If the source item has been deleted, is inlined or is inaccessible, use the original subitem data
-            if not ref or not deref:
+            if ref and deref:
+                dereferenced_fields[field].append(
+                    {
+                        **item_doc[field][ind],
+                        "item": deref,
+                    }
+                )
+            else:
                 dereferenced_fields[field].append(item_doc[field][ind])
-                continue
-
-            dereferenced_fields[field].append(
-                {
-                    **item_doc[field][ind],
-                    "item": deref,
-                }
-            )
 
     item_doc.update(dereferenced_fields)
 

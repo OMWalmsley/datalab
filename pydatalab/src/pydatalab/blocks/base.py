@@ -133,7 +133,7 @@ class DataBlock:
 
     _supports_collections: bool = False
     """Whether this datablock can operate on collection data, or just individual items"""
-    # possibly remove along with file ids
+    # possibly remove along with file id. If the default become multifile.
     multi_file: bool = False
     """Whether this block can accept multiple files as input."""
 

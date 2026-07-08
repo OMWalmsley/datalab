@@ -14,9 +14,9 @@ def is_ready():
             jsonify(status="error", message="Unable to connect to MongoDB at specified URI."),
             502,
         )
-    return (jsonify(status="success", message="Server and database are ready"), 200)
+    return jsonify(status="success", message="Server and database are ready"), 200
 
 
 @HEALTHCHECK.route("/healthcheck/is_alive", methods=["GET"])
 def is_alive():
-    return (jsonify(status="success", message="Server is alive"), 200)
+    return jsonify(status="success", message="Server is alive"), 200

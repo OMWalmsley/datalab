@@ -24,6 +24,7 @@ _app = None
 Used by background tasks that need an app/request context but run outside of
 a real HTTP request (e.g. APScheduler jobs).
 """
+# Possibly move asynchronuous functions out of routes.
 
 
 def _process_block_async(
@@ -58,6 +59,7 @@ def _process_block_async(
         )
 
     with app_ctx, req_ctx:
+        # So
         if creator_id:
             user = get_by_id(str(creator_id))
             if user:
@@ -80,6 +82,7 @@ def _process_block_async(
                 try:
                     block.process_events(event_data)
                 except NotImplementedError:
+                    # Why?? not implemented?? Why just pass without saying anything..
                     pass
 
             add_stage("Saving block state to database")
