@@ -127,7 +127,7 @@ class DataBlock:
     """Any default values that should be set if they are not
     supplied during block init.
     """
-
+    # list of plot functions that are then called when we want to plot the data.
     plot_functions: Sequence[Callable[[], None]] | None = None
     """A list of methods that will generate plots for this block."""
 
@@ -342,7 +342,7 @@ class DataBlock:
         with a given item, collection and block ID.
 
         Parameters:
-            data: The block data to initialiaze the block with.
+            data: The block data to initialise the block with.
 
         """
         block = cls(
