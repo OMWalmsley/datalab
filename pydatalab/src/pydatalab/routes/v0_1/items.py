@@ -1780,3 +1780,11 @@ def get_access_token_info(refcode: str):
         ), 200
     else:
         return jsonify({"status": "success", "has_token": False}), 200
+
+
+@ITEMS.route("/locations", methods=["GET"])
+def get_locations_for_items():
+    items = flask_mongo.db.items.find(
+        {"creator_ids": {"$in": [ObjectId(current_user.id)]}}, {"Location": 1}
+    )
+    return jsonify({"list": list(items)}, 200)
