@@ -1784,7 +1784,30 @@ def get_access_token_info(refcode: str):
 
 @ITEMS.route("/locations", methods=["GET"])
 def get_locations_for_items():
-    items = flask_mongo.db.items.find(
-        {"creator_ids": {"$in": [ObjectId(current_user.id)]}}, {"Location": 1}
+    items = flask_mongo.db.items.distinct(
+        "location",
+        {
+            "creator_ids": {"$in": [ObjectId(current_user.id)]},
+            "location": {"$ne": None},
+            **get_default_permissions(user_only=True),
+        },
     )
-    return jsonify({"list": list(items)}, 200)
+    flat_locations = list(items)
+    nested_locations = {}
+    for location_locators in flat_locations:
+        comprising_locations = location_locators.split(">")
+        curr_dict = nested_locations
+        for index, location in enumerate(comprising_locations):
+            location = location.strip()
+            if (
+                location in curr_dict
+                and index + 1 < len(comprising_locations)
+                and comprising_locations[index + 1] not in curr_dict[location]
+            ):
+                curr_dict[location][comprising_locations[index + 1].strip()] = {}
+                curr_dict = curr_dict[location]
+            elif index + 1 < len(comprising_locations):
+                curr_dict[location] = {comprising_locations[index + 1].strip(): {}}
+                curr_dict = curr_dict[location]
+
+    return jsonify({"flat_locations": flat_locations, "nested_locations": nested_locations}), 200

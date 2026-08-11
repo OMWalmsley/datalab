@@ -7,6 +7,7 @@ from flask.testing import FlaskClient
 
 from pydatalab.models import Cell, Collection, Equipment, Sample, StartingMaterial
 from pydatalab.models.people import AccountStatus
+from pydatalab.mongo import flask_mongo
 
 TEST_DATABASE_NAME = "__datalab-testing__"
 
@@ -83,7 +84,6 @@ def app_config(secret_key, files_directory):
 def app(real_mongo_client, app_config):
     """Yields the test app."""
     from pydatalab.main import create_app
-    from pydatalab.mongo import flask_mongo
 
     mongo_cli = real_mongo_client
     if mongo_cli is None:
@@ -463,7 +463,6 @@ def fixture_insert_complicated_sample_constituents(user_id):
     """Insert the starting materials referenced by complicated_sample into the database
     so that entry_reference_lookup can resolve them."""
     from pydatalab.models.utils import generate_unique_refcode
-    from pydatalab.mongo import flask_mongo
 
     items = []
     for sm_id, sm_name in [
@@ -600,13 +599,30 @@ def fixture_default_equipment_model_dump(default_equipment):
 
 def _insert_and_cleanup_item_from_model(model):
     from pydatalab.models.utils import generate_unique_refcode
-    from pydatalab.mongo import flask_mongo
 
     refcode = generate_unique_refcode()
     model.refcode = refcode
     flask_mongo.db.items.insert_one(model.model_dump(exclude_unset=False))
     yield model
     flask_mongo.db.items.delete_one({"refcode": model.refcode})
+
+
+@pytest.fixture(scope="function", name="item_creator")
+def fixture_item_creator():
+    ref_codes_to_remove = []
+
+    def _insert_item_from_model(model):
+        from pydatalab.models.utils import generate_unique_refcode
+        from pydatalab.mongo import flask_mongo
+
+        refcode = generate_unique_refcode()
+        model.refcode = refcode
+        flask_mongo.db.items.insert_one(model.model_dump(exclude_unset=False))
+        ref_codes_to_remove.append(refcode)
+        return model
+
+    yield _insert_item_from_model
+    flask_mongo.db.items.delete_many({"refcode": {"$in": ref_codes_to_remove}})
 
 
 @pytest.fixture(scope="module", name="insert_default_sample")
